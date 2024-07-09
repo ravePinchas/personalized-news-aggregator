@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGO_URL=mongodb://appUser:securePassword@mongo:27017/user-service-db
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  news-service:
+    build: ./news-service
+    # Define ports or other configurations specific to news-service
+
+  notification-service:
+    build: ./notification-service
+    # Define ports or other configurations specific to notification-service
+
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
