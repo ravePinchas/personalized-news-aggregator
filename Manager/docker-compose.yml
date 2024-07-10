@@ -7,15 +7,18 @@ services:
       - "3003:3003"
     env_file:
       - .env
-    # environment:
-    #   - MONGO_URL=mongodb://mongo-service:27017/user-service-db
-    # depends_on:
-    #   - mongo-service
+
+  news-service:
+    build: ./news-service
+    ports:
+      - "3004:3004"
+    env_file:
+      - .env
 
   # mongo-service:
   #   image: mongo
   #   ports:
-  #     - "27018:27017"
+  #     - "27017:27017"
   #   environment:
   #     MONGO_INITDB_ROOT_USERNAME: root
   #     MONGO_INITDB_ROOT_PASSWORD: example

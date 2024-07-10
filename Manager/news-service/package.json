@@ -1,14 +1,14 @@
 {
-    "name": "news-service",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "dependencies": {
-      "axios": "^0.21.1",
-      "express": "^4.17.1",
-      "uuid": "^8.3.2"
-    }
+  "name": "news-service",
+  "version": "1.0.0",
+  "description": "News service to fetch news based on user preferences",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
   }
-  
+}
