@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./user-service/.env
+
+  news-service:
+    build: ./news-service
+    ports:
+      - "3004:3004"
+    env_file:
+      - ./news-service/.env
+
+  manager:
+    build: ./manager
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./manager/.env
