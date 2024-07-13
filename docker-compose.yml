@@ -14,10 +14,3 @@ services:
       - "3004:3004"
     env_file:
       - ./news-service/.env
-
-  manager:
-    build: ./manager
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./manager/.env
