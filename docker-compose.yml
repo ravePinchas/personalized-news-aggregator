@@ -7,6 +7,15 @@ services:
       - "3003:3003"
     env_file:
       - ./user-service/.env
+    networks:
+      - dapr-network
+    labels:
+      - "dapr.io/enabled=true"
+      - "dapr.io/app-id=user-service"
+      - "dapr.io/app-port=3003"
+      - "dapr.io/config=statestore-config"
+    depends_on:
+      - mongo
 
   news-service:
     build: ./news-service
@@ -14,10 +23,36 @@ services:
       - "3004:3004"
     env_file:
       - ./news-service/.env
+    networks:
+      - dapr-network
+    labels:
+      - "dapr.io/enabled=true"
+      - "dapr.io/app-id=news-service"
+      - "dapr.io/app-port=3004"
+      - "dapr.io/config=statestore-config"
 
   notification-service:
     build: ./notification-service
     ports:
       - "3002:3002"
+    networks:
+      - dapr-network
+    labels:
+      - "dapr.io/enabled=true"
+      - "dapr.io/app-id=notification-service"
+      - "dapr.io/app-port=3002"
+      - "dapr.io/config=statestore-config"
 
-  
+  mongo:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - dapr-network
+
+networks:
+  dapr-network:
+    driver: bridge
