@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
+const notificationRoutes = require('./routes/notification-route'); // Import user route handlers
+
+app.use(express.json());
 const PORT = process.env.PORT || 3002;
 
-app.get('/', (req, res) => {
-    res.send('Notification Service');
-});
+
+app.use('/email', notificationRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Notification Service is running on port ${PORT}`);

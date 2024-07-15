@@ -14,3 +14,10 @@ services:
       - "3004:3004"
     env_file:
       - ./news-service/.env
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3002:3002"
+
+  
