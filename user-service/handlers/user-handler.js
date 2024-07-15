@@ -1,63 +1,57 @@
-const fetch = require('node-fetch');
+const {MongoClient, ObjectId } = require('mongodb');
 
-const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
-const DAPR_STATE_STORE_NAME = process.env.DAPR_STATE_STORE_NAME || 'statestore';
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017';
+let db;
 
-const daprUrl = `http://localhost:${DAPR_HTTP_PORT}/v1.0/state/${DAPR_STATE_STORE_NAME}`;
+MongoClient.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(client => {
+        console.log('Connected to MongoDB');
+        db = client.db('user-service-db');
+    })
+    .catch(error => console.error('Error connecting to MongoDB:', error));
 
-const getUserHandler = async (id) => {
-    const response = await fetch(`${daprUrl}/${id}`);
-    if (response.ok) {
-        return await response.json();
-    } else {
-        return null;
+
+
+const getUserHandler = async (id)=> {
+    const user = await db
+    .collection('users')
+    .findOne({ _id: new ObjectId(id) })
+    return user
+}
+
+const getUsersHandler = async () =>{
+    const users = await db.collection('users').find().toArray()
+    return users
+}
+
+
+const createUserHandler = async(newUser)=> {
+
+    const user = await db.
+    collection('users').findOne({email: newUser.email})
+
+    if(!user){
+        const createdUser = await db
+        .collection('users')
+        .insert(newUser)
+        return createdUser
+    } else{
+        throw new Error("Email already is taken")
     }
 }
 
-const getUsersHandler = async () => {
-    const response = await fetch(daprUrl);
-    if (response.ok) {
-        return await response.json();
-    } else {
-        return [];
-    }
+const updateUserPrefernceHandler = async(userEmail, newPreferneces, channel)=> {
+    const updateObj = newPreferneces ? {preferences: newPreferneces} : {channel}
+    const updatedUser = await db
+    .collection('users')
+    .update({email: userEmail}, {$set: updateObj})
+    return updatedUser
 }
 
-const createUserHandler = async (newUser) => {
-    const user = await getUserHandler(newUser.email);
-    if (!user) {
-        const response = await fetch(daprUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify([{ key: newUser.email, value: newUser }])
-        });
-        if (response.ok) {
-            return newUser;
-        } else {
-            throw new Error('Error creating user');
-        }
-    } else {
-        throw new Error('Email already taken');
-    }
-}
-
-const updateUserPreferenceHandler = async (userEmail, newPreferences, channel) => {
-    const updateObj = newPreferences ? { preferences: newPreferences } : { channel };
-    const response = await fetch(daprUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([{ key: userEmail, value: updateObj }])
-    });
-    if (response.ok) {
-        return updateObj;
-    } else {
-        throw new Error('Error updating user');
-    }
-}
 
 module.exports = {
     getUserHandler,
     getUsersHandler,
     createUserHandler,
-    updateUserPreferenceHandler
+    updateUserPrefernceHandler
 }

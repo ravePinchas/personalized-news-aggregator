@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3003;
 app.use(express.json());
 
 // Dapr middleware
-const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
-const DAPR_STATE_STORE_NAME = process.env.DAPR_STATE_STORE_NAME || 'statestore';
+// const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
+// const DAPR_STATE_STORE_NAME = process.env.DAPR_STATE_STORE_NAME || 'statestore';
 
 // Dapr state store name
 app.use('/user', userRoutes);
