@@ -1,11 +1,8 @@
-const { fetchNewsHandler } = require("../handlers/new-service-handler");
-const axios = require('axios');
+// news-service/controllers/news-service-controller.js
+const amqp = require('amqplib/callback_api');
 require('dotenv').config();
 
-const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
-const USER_SERVICE_URL = `http://localhost:${DAPR_HTTP_PORT}/v1.0/invoke/user-service/method/user`;
-
-const fetchNewsController = async(req, res) => {
+const fetchNewsController = async (req, res) => {
     const { preferences } = req.params;
     const preferencesArray = preferences.split(',');
 
@@ -14,17 +11,41 @@ const fetchNewsController = async(req, res) => {
             return res.status(400).json({ error: 'User has no preferences set' });
         }
 
-        const userPreferencesResponse = await axios.get(`${USER_SERVICE_URL}/${preferences}`);
-        const userPreferences = userPreferencesResponse.data.preferences;
+        // Send the request to RabbitMQ for async processing
+        amqp.connect(`amqp://${process.env.RABBITMQ_HOST || 'localhost'}`, (error0, connection) => {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel((error1, channel) => {
+                if (error1) {
+                    throw error1;
+                }
+                const queue = 'news_queue';
+                const msg = JSON.stringify({
+                    preferences: preferencesArray,
+                    userPreferences: preferences // or add more user-specific information if needed
+                });
 
-        const newsResponse = await fetchNewsHandler(userPreferences);
-        res.json(newsResponse.data);
+                channel.assertQueue(queue, {
+                    durable: false
+                });
+                channel.sendToQueue(queue, Buffer.from(msg));
+
+                console.log(" [x] Sent %s", msg);
+            });
+
+            setTimeout(() => {
+                connection.close();
+            }, 500);
+        });
+
+        res.status(202).json({ status: 'Request received. Processing in background.' });
     } catch (error) {
         console.error('Error fetching news:', error);
         res.status(500).json({ error: 'Error fetching news' });
     }
-}
+};
 
 module.exports = {
     fetchNewsController
-}
+};
