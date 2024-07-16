@@ -17,22 +17,22 @@ app.use(bodyParser.json())
 require('dotenv').config()
 
 
-const init = async () => {
-    const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`)
-    console.log(res.data);
-}
+// const init = async () => {
+//     const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`)
+//     console.log(res.data);
+// }
 
-app.post(URI, async (req, res)=> {
-    console.log(req.body)
+// app.post(URI, async (req, res)=> {
+//     console.log(req.body)
     
-    const chatId = req.body.message.chat.id
-    const text = req.body.message.text
+//     const chatId = req.body.message.chat.id
+//     const text = req.body.message.text
 
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-        chat_Id : chatId,
-        text: text
-    })
-})
+//     await axios.post(`${TELEGRAM_API}/sendMessage`, {
+//         chat_Id : chatId,
+//         text: text
+//     })
+// })
 
 
 const PORT = process.env.PORT || 3002
@@ -41,5 +41,5 @@ app.use('/', notificationRoutes);
 
 app.listen(PORT, async () => {
     console.log(`Notification Service is running on port ${PORT}`);
-    await init()
+    // await init()
 });

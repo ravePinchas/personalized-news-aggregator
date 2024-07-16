@@ -1,16 +1,15 @@
-// user-service/routes/userRoutes.js
 const express = require('express');
 const { getUserController, getUsersController, createUserController, updateUserController } = require('../controllers/user-controller');
+const { validateCreateUser, validateUpdateUser } = require('../validators/user-validator');
 const router = express.Router();
 
-router.get('/all-users', getUsersController)
+router.get('/all-users', getUsersController);
 
 // GET /user/:id - Fetch user details by id
-router.get('/:id', getUserController)
+router.get('/:id', getUserController);
 
-router.post('/register', createUserController)
+router.post('/register', validateCreateUser, createUserController);
 
-router.patch('/preferences', updateUserController)
-
+router.patch('/preferences', validateUpdateUser, updateUserController);
 
 module.exports = router;

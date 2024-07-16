@@ -1,14 +1,8 @@
-// news-service/routes/newsRoutes.js
 const express = require('express');
-const axios = require('axios');
 const { fetchNewsController } = require('../controllers/new-service-controller');
+const { validateFetchNews } = require('../validators/news-validator');
 const router = express.Router();
-require('dotenv').config();
 
-
-const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3003';
-
-// GET /news/:userId - Fetch news based on user preferences
-router.get('/:preferences', fetchNewsController);
+router.get('/:preferences', validateFetchNews, fetchNewsController);
 
 module.exports = router;

@@ -1,11 +1,11 @@
 const { fetchNewsHandler } = require("../handlers/new-service-handler");
-const axios = require('axios');
+const DaprClient = require('@dapr/dapr').DaprClient;
 require('dotenv').config();
 
 const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
-const USER_SERVICE_URL = `http://localhost:${DAPR_HTTP_PORT}/v1.0/invoke/user-service/method/user`;
+const daprClient = new DaprClient(`http://localhost:${DAPR_HTTP_PORT}`, DAPR_HTTP_PORT);
 
-const fetchNewsController = async(req, res) => {
+const fetchNewsController = async (req, res) => {
     const { preferences } = req.params;
     const preferencesArray = preferences.split(',');
 
@@ -14,9 +14,11 @@ const fetchNewsController = async(req, res) => {
             return res.status(400).json({ error: 'User has no preferences set' });
         }
 
-        const userPreferencesResponse = await axios.get(`${USER_SERVICE_URL}/${preferences}`);
-        const userPreferences = userPreferencesResponse.data.preferences;
+        // Fetch user preferences using Dapr service invocation
+        const userPreferencesResponse = await daprClient.invoker.invoke('user-service', `user/${preferences}`, 'GET');
+        const userPreferences = userPreferencesResponse.preferences;
 
+        // Fetch news based on user preferences
         const newsResponse = await fetchNewsHandler(userPreferences);
         res.json(newsResponse.data);
     } catch (error) {
