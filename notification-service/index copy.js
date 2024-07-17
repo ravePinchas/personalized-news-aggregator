@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(require('body-parser').json());
 
 // Start the consumer
-// startConsumer();
+startConsumer();
 
 // Routes
 app.use('/', notificationRoutes);

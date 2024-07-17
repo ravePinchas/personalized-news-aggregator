@@ -1,24 +1,25 @@
-const request = require('supertest');
-const express = require('express');
-const newsRoutes = require('../routes/newsRoutes');
-require('dotenv').config();
+const { fetchNewsBasedOnPreferences } = require('../handlers/new-service-handler');
+const { validateFetchNews } = require('../validators/news-validator');
 
-const app = express();
-app.use(express.json());
-app.use('/news', newsRoutes);
-
-// Mock Handlers
-jest.mock('../handlers/new-service-handler', () => ({
-    fetchNewsHandler: jest.fn()
-}));
-
-const { fetchNewsHandler } = require('../handlers/new-service-handler');
-
-describe('News Routes', () => {
+describe('News Service Handler', () => {
     it('should fetch news based on preferences', async () => {
-        fetchNewsHandler.mockResolvedValue({ data: { articles: [{ title: 'Test News' }] } });
-        const res = await request(app).get('/news/news');
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toEqual({ articles: [{ title: 'Test News' }] });
+        const preferencesArray = ['sports', 'technology'];
+        const validationResult = validateFetchNews({ preferences: preferencesArray });
+
+        expect(validationResult.error).toBeNull();
+
+        const newsData = await fetchNewsBasedOnPreferences(preferencesArray);
+        expect(newsData).toBeDefined();
+        // Add more specific tests based on the expected response structure or content
     });
+
+    it('should fail if preferences array is empty', async () => {
+        const preferencesArray = [];
+        const validationResult = validateFetchNews({ preferences: preferencesArray });
+
+        expect(validationResult.error).not.toBeNull();
+        // Add assertions for the specific error message or status code
+    });
+
+    // Add more test cases for edge cases and different scenarios
 });

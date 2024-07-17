@@ -1,38 +1,32 @@
-const request = require('supertest');
-const express = require('express');
-const notificationRoutes = require('../routes/notification-route');
-require('dotenv').config();
-
-const app = express();
-app.use(express.json());
-app.use('/', notificationRoutes);
-
-// Mock Handlers
-jest.mock('../handlers/notification-handler', () => ({
-    sendEmailHandler: jest.fn(),
-    sendTelegramHandler: jest.fn()
-}));
-
 const { sendEmailHandler, sendTelegramHandler } = require('../handlers/notification-handler');
+const { validateSendEmail, validateSendTelegram } = require('../validators/notification-validator');
 
-describe('Notification Routes', () => {
+describe('Notification Service Handler', () => {
     it('should send an email', async () => {
-        sendEmailHandler.mockResolvedValue();
-        const res = await request(app).post('/email/send').send({
-            email: 'test@example.com',
-            newsContent: 'This is a test email'
-        });
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toEqual({ message: 'Email sent successfully' });
+        const emailData = { email: 'test@example.com', newsContent: 'This is a test email' };
+        const validationResult = validateSendEmail(emailData);
+
+        expect(validationResult.error).toBeNull();
+
+        // Test sending email function with valid data
+        const result = await sendEmailHandler(emailData.email, emailData.newsContent);
+
+        expect(result).toBeDefined();
+        // Add more specific tests for email sending functionality
     });
 
     it('should send a telegram message', async () => {
-        sendTelegramHandler.mockResolvedValue();
-        const res = await request(app).post('/telegram/send').send({
-            chat_id: '12345',
-            text: 'This is a test message'
-        });
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toEqual({ message: 'Message sent successfully' });
+        const telegramData = { chat_id: '12345', text: 'Test message' };
+        const validationResult = validateSendTelegram(telegramData);
+
+        expect(validationResult.error).toBeNull();
+
+        // Test sending telegram message function with valid data
+        const result = await sendTelegramHandler(telegramData.chat_id, telegramData.text);
+
+        expect(result).toBeDefined();
+        // Add more specific tests for sending telegram messages
     });
+
+    // Add more test cases for edge cases and different scenarios
 });

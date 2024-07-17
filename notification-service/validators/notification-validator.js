@@ -10,20 +10,12 @@ const sendTelegramSchema = Joi.object({
     text: Joi.string().required()
 });
 
-const validateSendEmail = (req, res, next) => {
-    const { error } = sendEmailSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ message: error.details[0].message });
-    }
-    next();
+const validateSendEmail = (data) => {
+    return sendEmailSchema.validate(data);
 };
 
-const validateSendTelegram = (req, res, next) => {
-    const { error } = sendTelegramSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ message: error.details[0].message });
-    }
-    next();
+const validateSendTelegram = (data) => {
+    return sendTelegramSchema.validate(data);
 };
 
 module.exports = {
