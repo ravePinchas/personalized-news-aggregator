@@ -10,48 +10,40 @@ MongoClient.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true
     })
     .catch(error => console.error('Error connecting to MongoDB:', error));
 
-
-
-const getUserHandler = async (id)=> {
+const getUserHandler = async (id) => {
     const user = await db
-    .collection('users')
-    .findOne({ _id: new ObjectId(id) })
-    return user
-}
-
-const getUsersHandler = async () =>{
-    const users = await db.collection('users').find().toArray()
-    return users
-}
-
-
-const createUserHandler = async(newUser)=> {
-
-    const user = await db.
-    collection('users').findOne({email: newUser.email})
-
-    if(!user){
-        const createdUser = await db
         .collection('users')
-        .insert(newUser)
-        return createdUser
-    } else{
-        throw new Error("Email already is taken")
+        .findOne({ _id: new ObjectId(id) });
+    return user;
+};
+
+const getUsersHandler = async () => {
+    const users = await db.collection('users').find().toArray();
+    return users;
+};
+
+const createUserHandler = async(newUser) => {
+    const user = await db.collection('users').findOne({email: newUser.email});
+
+    if(!user) {
+        const createdUser = await db.collection('users').insert(newUser);
+        return createdUser;
+    } else {
+        throw new Error("Email already is taken");
     }
-}
+};
 
-const updateUserPrefernceHandler = async(userEmail, newPreferneces, channel)=> {
-    const updateObj = newPreferneces ? {preferences: newPreferneces} : {channel}
+const updateUserPrefernceHandler = async(userEmail, newPreferneces, channel) => {
+    const updateObj = newPreferneces ? {preferences: newPreferneces} : {channel};
     const updatedUser = await db
-    .collection('users')
-    .update({email: userEmail}, {$set: updateObj})
-    return updatedUser
-}
-
+        .collection('users')
+        .updateOne({email: userEmail}, {$set: updateObj});
+    return updatedUser;
+};
 
 module.exports = {
     getUserHandler,
     getUsersHandler,
     createUserHandler,
     updateUserPrefernceHandler
-}
+};

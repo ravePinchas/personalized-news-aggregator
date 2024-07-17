@@ -1,4 +1,3 @@
-// news-service/index.js
 const express = require('express');
 const newsRoutes = require('./routes/newsRoutes'); // Import news route handlers
 require('dotenv').config();

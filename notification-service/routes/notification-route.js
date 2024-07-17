@@ -1,10 +1,9 @@
 const express = require('express');
-const { sendEmailController, sendTelegramController } = require("../controllers/notification-controller");
-const { validateSendEmail, validateSendTelegram } = require('../validators/notification-validator');
 const router = express.Router();
+const { sendEmailController, sendTelegramController, sendNotificationsController } = require('../controllers/notification-controller');
 
-router.post('/email/send', validateSendEmail, sendEmailController);
-
-router.post('/telegram/send', validateSendTelegram, sendTelegramController);
+router.post('/email/send', sendEmailController);
+router.post('/telegram/send', sendTelegramController);
+router.post('/sendNotifications', sendNotificationsController);
 
 module.exports = router;

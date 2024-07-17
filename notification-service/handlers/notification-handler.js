@@ -1,6 +1,12 @@
 const nodeMailer = require('nodemailer');
 const axios = require('axios');
+const amqp = require('amqplib/callback_api');
+const { DaprClient, HttpMethod } = require('dapr-client');
 require('dotenv').config();
+
+const daprPort = process.env.DAPR_HTTP_PORT || 3500;
+const daprUrl = `http://localhost:${daprPort}/v1.0/invoke`;
+const daprClient = new DaprClient(daprUrl, daprPort);
 
 const { MY_TOKEN } = process.env;
 const TELEGRAM_API = `https://api.telegram.org/bot${MY_TOKEN}`;
@@ -41,7 +47,7 @@ const fetchNewsBasedOnPreferences = async (preferencesArray) => {
         }
     });
     return newsResponse.data;
-}
+};
 
 const sendNotifications = async (preferences, userPreferences) => {
     const newsContent = await fetchNewsBasedOnPreferences(preferences);
@@ -54,8 +60,6 @@ const sendNotifications = async (preferences, userPreferences) => {
 };
 
 const startConsumer = () => {
-    const amqp = require('amqplib/callback_api');
-
     amqp.connect(`amqp://${process.env.RABBITMQ_HOST || 'localhost'}`, (error0, connection) => {
         if (error0) {
             throw error0;
@@ -87,10 +91,9 @@ const startConsumer = () => {
     });
 };
 
-startConsumer();
-
 module.exports = {
     sendEmailHandler,
     sendTelegramHandler,
+    sendNotifications,
     startConsumer
 };
