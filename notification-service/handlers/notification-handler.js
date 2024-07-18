@@ -1,5 +1,10 @@
 const nodeMailer = require('nodemailer');
 const axios = require('axios');
+require('dotenv').config();
+
+const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
+const NEWS_SERVICE_URL = `http://localhost:${DAPR_HTTP_PORT}/v1.0/invoke/news-service/method/news`;
+
 let transporter;
 
 const initTransporter = () => {
@@ -30,7 +35,19 @@ const sendTelegramHandler = async (chat_id, text) => {
     await axios.post(`${TELEGRAM_API}/sendMessage`, { chat_id, text });
 };
 
+const sendNotifications = async (preferences, userPreferences) => {
+    const preferencesArray = preferences.split(',');
+    const newsResponse = await axios.post(`${NEWS_SERVICE_URL}/${userPreferences}`, { preferences: preferencesArray });
+    const newsContent = newsResponse.data;
+
+    await Promise.all([
+        sendEmailHandler(userPreferences.email, newsContent),
+        sendTelegramHandler(userPreferences.chat_id, newsContent)
+    ]);
+};
+
 module.exports = {
     sendEmailHandler,
-    sendTelegramHandler
+    sendTelegramHandler,
+    sendNotifications
 };

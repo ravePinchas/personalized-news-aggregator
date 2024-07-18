@@ -1,4 +1,4 @@
-const { fetchNewsBasedOnPreferences } = require('../handlers/new-service-handler');
+const { fetchNewsBasedOnPreferences } = require('../handlers/news-handler');
 const { validateFetchNews } = require('../validators/news-validator');
 
 describe('News Service Handler', () => {
