@@ -37,12 +37,6 @@ services:
       - "dapr.io/app-id=notification-service"
       - "dapr.io/app-port=3002"
 
-  rabbitmq:
-    image: "rabbitmq:3-management"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   mongo:
     image: mongo
     ports:

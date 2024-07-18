@@ -25,6 +25,7 @@ const sendTelegramController = async (req, res) => {
 const sendNotificationsController = async (req, res) => {
     try {
         const { preferences, userPreferences } = req.body; // Expect preferences and userPreferences from request body
+        console.log(JSON.stringify(preferences));
         await sendNotifications(preferences, userPreferences); // Need to do validation
         res.status(200).json({ message: 'Notifications sent successfully' });
     } catch (error) {

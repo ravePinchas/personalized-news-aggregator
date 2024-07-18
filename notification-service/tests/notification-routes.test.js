@@ -8,11 +8,9 @@ describe('Notification Service Handler', () => {
 
         expect(validationResult.error).toBeNull();
 
-        // Test sending email function with valid data
         const result = await sendEmailHandler(emailData.email, emailData.newsContent);
 
         expect(result).toBeDefined();
-        // Add more specific tests for email sending functionality
     });
 
     it('should send a telegram message', async () => {
@@ -21,12 +19,9 @@ describe('Notification Service Handler', () => {
 
         expect(validationResult.error).toBeNull();
 
-        // Test sending telegram message function with valid data
         const result = await sendTelegramHandler(telegramData.chat_id, telegramData.text);
 
         expect(result).toBeDefined();
-        // Add more specific tests for sending telegram messages
-    });
 
-    // Add more test cases for edge cases and different scenarios
+    });
 });

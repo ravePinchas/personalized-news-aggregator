@@ -3,7 +3,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const DAPR_HTTP_PORT = process.env.DAPR_HTTP_PORT || 3500;
-const NEWS_SERVICE_URL = `http://localhost:${DAPR_HTTP_PORT}/v1.0/invoke/news-service/method/news`;
+const DAPR_URL = `http://localhost:${DAPR_HTTP_PORT}/v1.0/invoke/news-service/method/news`;
 
 let transporter;
 
@@ -37,9 +37,9 @@ const sendTelegramHandler = async (chat_id, text) => {
 
 const sendNotifications = async (preferences, userPreferences) => {
     const preferencesArray = preferences.split(',');
-    const newsResponse = await axios.post(`${NEWS_SERVICE_URL}/${userPreferences}`, { preferences: preferencesArray });
-    const newsContent = newsResponse.data;
-
+    const daprResponse = await axios.post(`${DAPR_URL}/${userPreferences}`, { preferences: preferencesArray });
+    const newsContent = daprResponse.data;
+    
     await Promise.all([
         sendEmailHandler(userPreferences.email, newsContent),
         sendTelegramHandler(userPreferences.chat_id, newsContent)
