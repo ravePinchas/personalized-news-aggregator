@@ -45,13 +45,13 @@ This project consists of three microservices: User Service, News Service, and No
 2. **Build the Docker Images** (optional): If you need to build the images first, run:
    docker-compose build
 
+![alt text](image-1.png)
+
 ![alt text](image-6.png)
 
 ![alt text](image-7.png)
 
 ![alt text](image-8.png)
-
-![alt text](image-1.png)
 
 ![alt text](image.png)
 
