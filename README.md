@@ -42,10 +42,23 @@ This project consists of three microservices: User Service, News Service, and No
 
 1. **Navigate to the Project Directory**: Open a terminal and navigate to the root directory of your project where the `docker-compose.yml` file is located.
 
-2. **Build the Docker Images** (optional): If you need to build the images first, run:
+2. **Build the Docker Images**: If you need to build the images first, run:
    docker-compose build
 
-![alt text](image-1.png)
+3. **Start the Services**:
+  docker-compose up
+
+4. **run in background**:
+  docker-compose up -d
+
+5. **View Running Containers**:
+  docker-compose ps
+
+6. **Stoping the Services**:
+  docker-compose down
+
+### Postman
+
 
 ![alt text](image-6.png)
 

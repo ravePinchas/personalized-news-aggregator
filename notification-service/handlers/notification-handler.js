@@ -14,8 +14,8 @@ const initTransporter = () => {
             user: process.env.EMAIL_USER_NAME,
             pass: process.env.EMAIL_PASSWORD
         }
-    });
-};
+    })
+}
 
 const sendEmailHandler = async (email, newsContent) => {
     if (!transporter) {
